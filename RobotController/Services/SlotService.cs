@@ -22,20 +22,20 @@ namespace RobotController.Services
             {
                 slots = new List<Slot>();
             }
-
-            if (slots.Count < numSlots)
+            var currentNumSlots = slots.Count();
+            if (currentNumSlots < numSlots)
             {
-                for (int i = 0; i < numSlots - slots.Count; i++)
+                for (int i = 0; i < numSlots - currentNumSlots; i++)
                 {
                     slots.Add(new Slot
                     {
                         Blocks = new List<Block>(),
-                        SlotId = slots.Count + i
+                        SlotId = currentNumSlots + i + 1
                     });
                 }
             }
 
-            if (slots.Count > numSlots)
+            if (currentNumSlots > numSlots)
             {
                 /* 
                  * Assuming when resizing smaller that it's okay to get rid of slots 
@@ -44,9 +44,9 @@ namespace RobotController.Services
                  * move blocks to a different slot when resizing smaller.
                  */
 
-                for (int i = 0; i < slots.Count - numSlots; i++)
+                for (int i = 0; i < currentNumSlots - numSlots; i++)
                 {
-                    slots.RemoveAt(slots.Count() -1 - i);
+                    slots.RemoveAt(currentNumSlots - 1 - i);
                 }
             }
             return slots;
@@ -70,16 +70,18 @@ namespace RobotController.Services
 
         public List<Slot> MoveBlock(int fromSlotId, int toSlotId)
         {
-            var fromSlot = slots[fromSlotId-1];
-            var toSlot = slots[toSlotId-1];
-            if (fromSlot == null)
+
+            if (fromSlotId > slots.Count + 1)
             {
                 throw new ArgumentOutOfRangeException(string.Format("Cannot move block from Slot {0}. Slot {0} does not exist.", fromSlotId));
             }
-            if (toSlot == null)
+            if (toSlotId > slots.Count + 1)
             {
                 throw new ArgumentOutOfRangeException(string.Format("Cannot move block to Slot {0}. Slot {0} does not exist.", toSlotId));
             }
+
+            var fromSlot = slots[fromSlotId - 1];
+            var toSlot = slots[toSlotId - 1];
 
             if (!fromSlot.Blocks.Any())
             {
