@@ -119,6 +119,12 @@ namespace RobotController.Services
 
         public void UndoCommands(int numCommands)
         {
+            /* 
+             * Idea is to reset the slots and re-run all commands up to the number to "undo".
+             * This creates a slight problem when "undoing" a "undo" command as it creates a 
+             * never ending loop. If I had more time I would optimize to reset the histories
+             * after an undo as well to prevent this.
+             */
             var currentHistories = historyService.GetHistoryCount();
             var history = historyService.GetFirstNCommands(currentHistories - numCommands);
             slotService.ResetSlots();
