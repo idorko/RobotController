@@ -13,9 +13,11 @@ namespace RobotController
         static void Main(string[] args)
         {
             var slots = new List<Slot>();
+            var histories = new List<History>();
             var slotService =  new SlotService(slots);
-            var commandService = new CommandService(slotService);
-            var displayService = new DisplayService(slots);
+            var historyService = new HistoryService(histories);
+            var displayService = new DisplayService(slots, historyService);
+            var commandService = new CommandService(slotService, historyService, displayService);
 
             while (true)
             {
@@ -24,7 +26,10 @@ namespace RobotController
                     Console.Write(">");
                     var command = Console.ReadLine();
                     commandService.ParseCommand(command);
-                    displayService.DisplaySlots();
+                    /* 
+                     * I making an assumption that we only want to save the history for valid commands.
+                     */
+                     historyService.AddHistory(command);
                 }
                 catch (Exception ex)
                 {

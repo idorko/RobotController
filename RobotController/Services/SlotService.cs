@@ -10,10 +10,18 @@ namespace RobotController.Services
     public class SlotService
     {
         private List<Slot> slots;
-
+        private bool slotsIntialized;
         public SlotService(List<Slot> slots)
         {
             this.slots = slots;
+            if (this.slots.Count > 0)
+            {
+                slotsIntialized = true;
+            }
+            else
+            {
+                slotsIntialized = false;
+            }
         }
 
         public List<Slot> Size(int numSlots)
@@ -49,6 +57,8 @@ namespace RobotController.Services
                     slots.RemoveAt(currentNumSlots - 1 - i);
                 }
             }
+
+            slotsIntialized = true;
             return slots;
         }
 
@@ -109,6 +119,17 @@ namespace RobotController.Services
             slot.Blocks.RemoveAt(slot.Blocks.Count() - 1);
 
             return slots;
+        }
+
+        public bool AreSlotsInitialized()
+        {
+            return slotsIntialized;
+        }
+
+        public void ResetSlots()
+        {
+            slots = new List<Slot>();
+            slotsIntialized = false;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Configuration;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -11,13 +12,17 @@ namespace RobotController.Services
     public class CommandService
     {
         private SlotService slotService;
+        private HistoryService historyService;
+        private DisplayService displayService;
 
-        public CommandService(SlotService slotService)
+        public CommandService(SlotService slotService, HistoryService historyService, DisplayService displayService)
         {
             this.slotService = slotService;
+            this.displayService = displayService;
+            this.historyService = historyService;
         }
 
-        public void ParseCommand(string command)
+        public void ParseCommand(string command, bool isUndo = false)
         {
             var actionReg = new Regex(@"^\w*");
             if (!actionReg.IsMatch(command))
@@ -28,23 +33,57 @@ namespace RobotController.Services
 
             var action = actionReg.Match(command).Value;
             var slotIds = new int[2];
+
+            if (action != "size" && !slotService.AreSlotsInitialized())
+            {
+                throw new Exception("You must run the size command first.");
+            }
+
             switch (action)
             {
                 case "size":
                     var numSlots = ParseParameters(command);
                     slotService.Size(numSlots[0]);
+                    if (!isUndo)
+                    {
+                        displayService.DisplaySlots();
+                    }
                     break;
                 case "add":
                     slotIds = ParseParameters(command);
                     slotService.AddBlock(slotIds[0]);
+                    if (!isUndo)
+                    {
+                        displayService.DisplaySlots();
+                    }
                     break;
                 case "mv":
                     slotIds = ParseParameters(command);
                     slotService.MoveBlock(slotIds[0], slotIds[1]);
+                    if (!isUndo)
+                    {
+                        displayService.DisplaySlots();
+                    }
                     break;
                 case "rm":
                     slotIds = ParseParameters(command);
                     slotService.RemoveBlock(slotIds[0]);
+                    if (!isUndo)
+                    {
+                        displayService.DisplaySlots();
+                    }
+                    break;
+                case "replay":
+                    var numHistories = ParseParameters(command);
+                    displayService.DisplayLastNHistories(numHistories[0]);
+                    break;
+                case "undo":
+                    var numCommands = ParseParameters(command);
+                    UndoCommands(numCommands[0]);
+                    if (!isUndo)
+                    {
+                        displayService.DisplaySlots();
+                    }
                     break;
                 default:
                     throw new Exception("Invalid command. Please try again.");
@@ -76,6 +115,18 @@ namespace RobotController.Services
             {
                 firstParam, secondParam
             };
+        }
+
+        public void UndoCommands(int numCommands)
+        {
+            var currentHistories = historyService.GetHistoryCount();
+            var history = historyService.GetFirstNCommands(currentHistories - numCommands);
+            slotService.ResetSlots();
+            foreach (var command in history)
+            {
+                ParseCommand(command.Command, true);
+            }
+
         }
     }
 }
