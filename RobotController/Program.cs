@@ -16,7 +16,7 @@ namespace RobotController
             var histories = new List<History>();
             var slotService =  new SlotService(slots);
             var historyService = new HistoryService(histories);
-            var displayService = new DisplayService(slots, historyService);
+            var displayService = new DisplayService(slotService, historyService);
             var commandService = new CommandService(slotService, historyService, displayService);
 
             while (true)

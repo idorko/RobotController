@@ -24,6 +24,11 @@ namespace RobotController.Services
             }
         }
 
+        public List<Slot> GetSlots()
+        {
+            return slots;
+        }
+
         public List<Slot> Size(int numSlots)
         {
             if (slots == null)

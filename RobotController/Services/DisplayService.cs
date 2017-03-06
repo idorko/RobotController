@@ -9,18 +9,18 @@ namespace RobotController.Services
 {
     public class DisplayService
     {
-        private List<Slot> slots;
+        private SlotService slotService;
         private HistoryService historyService;
 
-        public DisplayService(List<Slot> slots, HistoryService historyService)
+        public DisplayService(SlotService slotService, HistoryService historyService)
         {
-            this.slots = slots;
+            this.slotService = slotService;
             this.historyService = historyService;
         }
 
         public void DisplaySlots()
         {
-            foreach (var slot in slots)
+            foreach (var slot in slotService.GetSlots())
             {
                 DisplaySlot(slot);
             }
