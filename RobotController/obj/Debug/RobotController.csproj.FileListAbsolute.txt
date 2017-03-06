@@ -1,6 +1,5 @@
 C:\Users\ian.dorko\Projects\RobotController\RobotController\bin\Debug\RobotController.exe.config
 C:\Users\ian.dorko\Projects\RobotController\RobotController\bin\Debug\RobotController.exe
 C:\Users\ian.dorko\Projects\RobotController\RobotController\bin\Debug\RobotController.pdb
-C:\Users\ian.dorko\Projects\RobotController\RobotController\obj\Debug\RobotController.csprojResolveAssemblyReference.cache
 C:\Users\ian.dorko\Projects\RobotController\RobotController\obj\Debug\RobotController.exe
 C:\Users\ian.dorko\Projects\RobotController\RobotController\obj\Debug\RobotController.pdb
